@@ -1,0 +1,77 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: varhavix-external-ingress
+  namespace: varhavix
+  labels:
+    tier: external
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - app.varhavix.com
+      secretName: varhavix-external-tls
+  rules:
+    - host: app.varhavix.com
+      http:
+        paths:
+          - path: /()(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-landing-ui
+                port:
+                  number: 80
+          - path: /lms(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-lms-ui
+                port:
+                  number: 80
+          - path: /mind-mapper(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-mind-mapper-ui
+                port:
+                  number: 80
+          - path: /media(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-media-ui
+                port:
+                  number: 80
+          - path: /api/v1/landing(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-landing-api
+                port:
+                  number: 8080
+          - path: /api/v1/lms(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-lms-api
+                port:
+                  number: 8081
+          - path: /api/v1/mind-mapper(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-mind-mapper-api
+                port:
+                  number: 8082
+          - path: /api/v1/media(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-media-api
+                port:
+                  number: 8086
