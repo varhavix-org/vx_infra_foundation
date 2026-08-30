@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vx-landing-api
+  name: vx-mentor-api
   namespace: varhavix
   labels:
-    app: vx-landing-api
+    app: vx-mentor-api
     tier: api
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: vx-landing-api
+      app: vx-mentor-api
   template:
     metadata:
       labels:
-        app: vx-landing-api
+        app: vx-mentor-api
         tier: api
     spec:
       containers:
-        - name: vx-landing-api
-          image: varhavix/vx-landing-api:latest
+        - name: vx-mentor-api
+          image: varhavix/vx-mentor-api:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 8085
           resources:
             requests:
               memory: "256Mi"
@@ -33,11 +33,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: vx-landing-api
+  name: vx-mentor-api
   namespace: varhavix
 spec:
   selector:
-    app: vx-landing-api
+    app: vx-mentor-api
   ports:
-    - port: 8080
-      targetPort: 8080
+    - port: 8085
+      targetPort: 8085

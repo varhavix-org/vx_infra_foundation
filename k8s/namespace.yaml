@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: varhavix
+  labels:
+    project: varhavix
+    managed-by: vx-infra-foundation

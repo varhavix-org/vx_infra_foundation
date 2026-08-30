@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vx-landing-ui
+  name: vx-media-ui
   namespace: varhavix
   labels:
-    app: vx-landing-ui
+    app: vx-media-ui
     tier: ui
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: vx-landing-ui
+      app: vx-media-ui
   template:
     metadata:
       labels:
-        app: vx-landing-ui
+        app: vx-media-ui
         tier: ui
     spec:
       containers:
-        - name: vx-landing-ui
-          image: varhavix/vx-landing-ui:latest
+        - name: vx-media-ui
+          image: varhavix/vx-media-ui:latest
           ports:
             - containerPort: 80
           resources:
@@ -33,11 +33,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: vx-landing-ui
+  name: vx-media-ui
   namespace: varhavix
 spec:
   selector:
-    app: vx-landing-ui
+    app: vx-media-ui
   ports:
     - port: 80
       targetPort: 80

@@ -1,0 +1,83 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: varhavix-ingress
+  namespace: varhavix
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: app.varhavix.com
+      http:
+        paths:
+          - path: /()(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-landing-ui
+                port:
+                  number: 80
+          - path: /admin(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-admin-ui
+                port:
+                  number: 80
+          - path: /mentor(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-mentor-ui
+                port:
+                  number: 80
+          - path: /mind-mapper(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-mind-mapper-ui
+                port:
+                  number: 80
+          - path: /media(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-media-ui
+                port:
+                  number: 80
+          - path: /api/v1/landing(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-landing-api
+                port:
+                  number: 8080
+          - path: /api/v1/mind-mapper(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-mind-mapper-api
+                port:
+                  number: 8082
+          - path: /api/v1/admin(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-admin-api
+                port:
+                  number: 8084
+          - path: /api/v1/mentor(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-mentor-api
+                port:
+                  number: 8085
+          - path: /api/v1/media(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-media-api
+                port:
+                  number: 8086
