@@ -8,18 +8,27 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # Restrict ingress to corporate VPN & private CIDRs
     nginx.ingress.kubernetes.io/whitelist-source-range: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx-internal
   tls:
     - hosts:
+        - internal.admin.varhavix.com
         - admin.varhavix.com
       secretName: varhavix-internal-tls
   rules:
-    - host: admin.varhavix.com
+    - host: internal.admin.varhavix.com
       http:
         paths:
+          - path: /()(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: vx-admin-ui
+                port:
+                  number: 80
           - path: /admin(/|$)(.*)
             pathType: ImplementationSpecific
             backend:
