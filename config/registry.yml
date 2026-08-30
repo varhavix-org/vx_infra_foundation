@@ -1,0 +1,60 @@
+# =======================================================================
+# VarhaviX Application Registry
+# Single source of truth for automation tools
+# =======================================================================
+apps:
+  apis:
+    - name: vx_app_landing_api
+      port: 8080
+      dockerfile: docker/templates/Dockerfile.spring-boot
+      database: varhavix_landing_db
+
+    - name: vx_app_lms_api
+      port: 8081
+      dockerfile: docker/templates/Dockerfile.spring-boot
+      database: varhavix_lms_db
+
+    - name: vx_app_mind_mapper_api
+      port: 8082
+      dockerfile: docker/templates/Dockerfile.spring-boot
+      database: varhavix_mind_mapper_db
+
+    - name: vx_app_admin_api
+      port: 8084
+      dockerfile: docker/templates/Dockerfile.spring-boot
+      database: varhavix_admin_db
+
+    - name: vx_app_mentor_api
+      port: 8085
+      dockerfile: docker/templates/Dockerfile.spring-boot
+      database: varhavix_mentor_db
+
+    - name: vx_app_media_api
+      port: 8086
+      dockerfile: docker/templates/Dockerfile.spring-boot
+      database: varhavix_media_db
+
+  uis:
+    - name: vx_app_landing_ui
+      port: 4200
+      dockerfile: docker/templates/Dockerfile.angular
+
+    - name: vx_app_admin_ui
+      port: 4201
+      dockerfile: docker/templates/Dockerfile.angular
+
+    - name: vx_app_mentor_ui
+      port: 4202
+      dockerfile: docker/templates/Dockerfile.angular
+
+    - name: vx_app_mind_mapper_ui
+      port: 4203
+      dockerfile: docker/templates/Dockerfile.angular
+
+    - name: vx_app_media_ui
+      port: 4204
+      dockerfile: docker/templates/Dockerfile.angular
+
+    - name: vx_app_lms_ui
+      port: 4205
+      dockerfile: docker/templates/Dockerfile.angular

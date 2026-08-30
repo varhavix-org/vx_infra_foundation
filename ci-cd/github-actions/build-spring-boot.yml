@@ -1,0 +1,41 @@
+# =======================================================================
+# Reusable CI/CD Workflow — Spring Boot API
+# Usage in app repo:
+#   jobs:
+#     build:
+#       uses: varhavix-org/vx_infra_foundation/.github/workflows/build-spring-boot.yml@main
+# =======================================================================
+name: Build Spring Boot API
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        type: string
+        default: '21'
+      artifact-name:
+        type: string
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: temurin
+          cache: maven
+
+      - name: Build & Test
+        run: mvn clean verify -B
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            -f ../vx_infra_foundation/docker/templates/Dockerfile.spring-boot \
+            -t ghcr.io/varhavix-org/${{ inputs.artifact-name }}:${{ github.sha }} \
+            .

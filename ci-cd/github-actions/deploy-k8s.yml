@@ -1,0 +1,36 @@
+# =======================================================================
+# Reusable CI/CD Workflow — K8s Deployment
+# =======================================================================
+name: Deploy to Kubernetes
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+      image-tag:
+        type: string
+        required: true
+    secrets:
+      KUBE_CONFIG:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Configure kubeconfig
+        run: echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+
+      - name: Deploy with Kustomize
+        run: |
+          cd vx_infra_foundation/k8s/overlays/${{ inputs.environment }}
+          kustomize build . | kubectl apply -f -
+          kubectl rollout status -n varhavix deployment --timeout=300s

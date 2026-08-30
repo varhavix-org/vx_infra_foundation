@@ -1,0 +1,54 @@
+# =======================================================================
+# Generic API Deployment Template
+# Override: Use Kustomize patches in overlays to customize per-app
+# =======================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vx-api-template
+  namespace: varhavix
+  labels:
+    tier: api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vx-api-template
+  template:
+    metadata:
+      labels:
+        app: vx-api-template
+        tier: api
+    spec:
+      containers:
+        - name: api
+          image: varhavix/vx-api-template:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "data,observability"
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: vx-db-config
+                  key: jdbc-url
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5

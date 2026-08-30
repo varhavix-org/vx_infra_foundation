@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: varhavix-redis
+  namespace: varhavix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: varhavix-redis
+  template:
+    metadata:
+      labels:
+        app: varhavix-redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          ports:
+            - containerPort: 6379
+          command: ["redis-server", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: varhavix-redis
+  namespace: varhavix
+spec:
+  selector:
+    app: varhavix-redis
+  ports:
+    - port: 6379

@@ -1,0 +1,18 @@
+# VarhaviX Kustomize Base
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: varhavix
+
+resources:
+  - namespace.yaml
+  - templates/api-deployment.yaml
+  - templates/ui-deployment.yaml
+  - templates/service.yaml
+  - ../infrastructure/postgres-statefulset.yaml
+  - ../infrastructure/redis-deployment.yaml
+  - ../infrastructure/ingress.yaml
+
+commonLabels:
+  platform: varhavix
+  managed-by: kustomize

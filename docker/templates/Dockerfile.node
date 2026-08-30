@@ -1,0 +1,20 @@
+# ============================================
+# VarhaviX Generic Node.js Service Dockerfile
+# ============================================
+# Usage: For any future Node.js microservices
+# Override: Copy and customize for your service.
+
+FROM node:22-alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --production --silent
+COPY . .
+
+FROM node:22-alpine
+WORKDIR /app
+RUN addgroup -S varhavix && adduser -S varhavix -G varhavix
+USER varhavix
+COPY --from=build /app .
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=3s CMD wget --spider -q http://localhost:3000/health || exit 1
+CMD ["node", "dist/index.js"]

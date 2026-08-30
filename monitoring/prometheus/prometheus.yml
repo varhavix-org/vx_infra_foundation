@@ -1,0 +1,35 @@
+# VarhaviX Prometheus Configuration
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'vx-landing-api'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['vx-landing-api:8080']
+
+  - job_name: 'vx-lms-api'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['vx-lms-api:8081']
+
+  - job_name: 'vx-mind-mapper-api'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['vx-mind-mapper-api:8082']
+
+  - job_name: 'vx-admin-api'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['vx-admin-api:8084']
+
+  - job_name: 'vx-mentor-api'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['vx-mentor-api:8085']
+
+  - job_name: 'vx-media-api'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['vx-media-api:8086']

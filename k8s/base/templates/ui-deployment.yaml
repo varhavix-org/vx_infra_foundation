@@ -1,0 +1,39 @@
+# =======================================================================
+# Generic UI Deployment Template
+# Override: Use Kustomize patches in overlays to customize per-app
+# =======================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vx-ui-template
+  namespace: varhavix
+  labels:
+    tier: ui
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vx-ui-template
+  template:
+    metadata:
+      labels:
+        app: vx-ui-template
+        tier: ui
+    spec:
+      containers:
+        - name: ui
+          image: varhavix/vx-ui-template:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            periodSeconds: 30

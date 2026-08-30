@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: varhavix-postgres
+  namespace: varhavix
+spec:
+  serviceName: varhavix-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: varhavix-postgres
+  template:
+    metadata:
+      labels:
+        app: varhavix-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: varhavix-db-secret
+                  key: password
+          volumeMounts:
+            - name: pg-data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+  volumeClaimTemplates:
+    - metadata:
+        name: pg-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 50Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: varhavix-postgres
+  namespace: varhavix
+spec:
+  selector:
+    app: varhavix-postgres
+  ports:
+    - port: 5432
+  clusterIP: None

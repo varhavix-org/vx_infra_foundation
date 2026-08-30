@@ -1,0 +1,13 @@
+# Generic Service Template
+apiVersion: v1
+kind: Service
+metadata:
+  name: vx-service-template
+  namespace: varhavix
+spec:
+  selector:
+    app: vx-service-template
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP

@@ -1,0 +1,42 @@
+# =======================================================================
+# VarhaviX Base Infrastructure — PostgreSQL + Redis
+# =======================================================================
+version: "3.9"
+
+services:
+  varhavix-postgres:
+    image: postgres:16-alpine
+    container_name: varhavix-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ../../iac/scripts/init-databases.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - varhavix-net
+
+  varhavix-redis:
+    image: redis:7-alpine
+    container_name: varhavix-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - varhavix-net
+
+volumes:
+  pg_data:
+
+networks:
+  varhavix-net:
+    driver: bridge

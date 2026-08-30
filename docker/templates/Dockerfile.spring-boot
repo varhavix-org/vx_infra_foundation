@@ -1,0 +1,33 @@
+# ============================================
+# VarhaviX Generic Spring Boot API Dockerfile
+# Multi-stage build: Java 21 + Alpine
+# ============================================
+# Usage: docker build -f Dockerfile.spring-boot -t <image> <context>
+# Override: Copy this into your app repo and customize as needed.
+
+FROM eclipse-temurin:21-jdk-alpine AS build
+WORKDIR /app
+
+# Cache dependencies
+COPY pom.xml .
+RUN apk add --no-cache maven && mvn dependency:go-offline -B
+
+# Build
+COPY src ./src
+RUN mvn clean package -DskipTests -B
+
+# Runtime
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+
+RUN addgroup -S varhavix && adduser -S varhavix -G varhavix
+USER varhavix
+
+COPY --from=build /app/target/*.jar app.jar
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD wget --spider -q http://localhost:8080/api/v1/health || exit 1
+
+ENTRYPOINT ["java", "-XX:+UseG1GC", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]
