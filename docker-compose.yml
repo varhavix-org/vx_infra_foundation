@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  postgres_db:
+    image: postgres:16-alpine
+    container_name: vx_postgres_db
+    environment:
+      POSTGRES_DB: varhavix_landing_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d varhavix_landing_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - varhavix_net
+
+  landing_api:
+    build:
+      context: ../vx_app_landing_api
+      dockerfile: ../vx_infra_foundation/docker/Dockerfile.api
+    container_name: vx_landing_api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_db:5432/varhavix_landing_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgrespassword
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    networks:
+      - varhavix_net
+
+  landing_ui:
+    build:
+      context: ../vx_app_landing_ui
+      dockerfile: ../vx_infra_foundation/docker/Dockerfile.ui
+    container_name: vx_landing_ui
+    ports:
+      - "80:80"
+    depends_on:
+      - landing_api
+    networks:
+      - varhavix_net
+
+volumes:
+  postgres_data:
+
+networks:
+  varhavix_net:
+    driver: bridge
